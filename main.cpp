@@ -1,9 +1,8 @@
-#include <stdio.h>
 #include <iostream>
-#include <stdlib.h>
 #include <cstdlib>
-
-
+#include <ctime>
+#include <fstream>
+#include <clocale>
 using namespace std;
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void tabuleiro(){
@@ -78,9 +77,14 @@ cout<<"\n*********************************************\n"
       <<"\n\tBoa sorte para sair\n";
 cout<<"\n*********************************************\n\n";
 }
+
+void historicoDePartidas(string ganhador);
+void imprimirHistorico();
+void apagarHistorico();
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 int main()
 {
+    setlocale(LC_ALL, "portuguese");
 
     int qtdJogadores;
     interface(qtdJogadores);
@@ -90,3 +94,74 @@ int main()
     return 0;
 }
 
+void historicoDePartidas(string jogador1, string jogador2,string ganhador)
+{   ofstream historico;
+    ifstream historicoRead;
+    int npartidas = 1;
+    int contLinhas = 0;
+    string s;
+    historicoRead.open("Historico.txt");
+    
+    if(historicoRead.is_open())
+    {
+        while (getline(historicoRead, s))
+        {
+            contLinhas++;
+            if(contLinhas % 3 == 0)
+            {
+                npartidas++;
+            }
+        }
+        historicoRead.close();
+    }
+    else
+    {
+        cout << "Não foi possível abrir o arquivo" << endl;
+    }
+
+
+    historico.open("Historico.txt",ios::app);
+    if(historico.is_open())
+    
+    {
+        historico << "Partida" << npartidas <<":"<< jogador1<<"VS"<< jogador2 <<endl
+        << "Vencedor:"<< ganhador <<endl
+        << "==========================================" <<endl;
+        historico.close();
+    }
+    else
+    {
+        cout <<"Erro na abertura do arquivo,a partida não foi salva no histórico" <<endl;
+    }
+
+}
+void imprimirHistorico()
+{
+    ifstream historico;
+    historico.open("Historico.txt");
+    string printHistorico;
+    if(historico.is_open())
+    {
+        while(getline(historico, printHistorico))
+        {
+            cout << printHistorico << endl;
+        }
+        historico.close();
+    }
+
+    else
+    {
+        cout << "Falha na abertura do arquivo" <<endl;
+    }
+}
+
+void apagarHistorico()
+{
+    ofstream historico("Historico.txt", ios::trunc);
+    if(historico.is_open())
+    {
+        historico.close();
+        cout << "Historico resetado com sucesso!" << endl;
+    }
+
+}
